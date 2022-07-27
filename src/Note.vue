@@ -1,8 +1,8 @@
 <template>
-  <div ref="note" id="note" :draggable="true" @dragend="changePosition($event)">
+  <div @click="$emit('endArrowPoint', thisNote)" ref="note" id="note" :draggable="true" @dragend="changePosition($event);$emit('changed', id, text, posX, posY)">
     <button @click="$emit('remove',id)">X</button>
-    <textarea v-model="text" placeholder="Type here" @change="$emit('changed', id, text, posX, posY)"></textarea> 
-    <div id="arrowPoint"></div>
+    <textarea @mouseup="handleTAChange" v-model="text" placeholder="Type here" @change="$emit('changed', id, text, posX, posY)"></textarea> 
+    <div @click="$emit('clickArrowPoint', thisNote)" id="arrowPoint"></div>
   </div>
 </template>
 
@@ -19,15 +19,25 @@ export default {
     return {
         text: this.content,
         posX: this.positionX,
-        posY: this.positionY
+        posY: this.positionY,
+        height: 0,
+        width: 0,
+        thisNote: this
     }
   },
   mounted() {
-    this.$refs.note.style.left = this.posX + 'px',
+    this.height = this.$refs.note.clientHeight
+    this.width = this.$refs.note.clientWidth
+    this.$refs.note.style.left = this.posX + 'px'
     this.$refs.note.style.top = this.posY + 'px'
   },
   methods: {
+    handleTAChange() {
+      this.height = this.$refs.note.clientHeight
+      this.width = this.$refs.note.clientWidth
+    },
     changePosition(event) {
+      console.log(this.height)
         this.$refs.note.style.left = event.pageX + 'px';
         this.$refs.note.style.top = event.pageY + 'px';
         this.posX = parseInt(this.$refs.note.style.left)
@@ -56,16 +66,18 @@ export default {
   visibility: collapse;
   border: 1px;
   border-style: solid;
-  border-radius: 15px;
-  width: 15px;
+  border-radius: 10px;
+  width: 24px;
   height: 15px;
   position: absolute;
-  left: calc(50%);
-  /* top: calc( 100% + 3px); */
+  left: calc(50% - 12px);
 }
 
-#arrowPoint:hover > #arrowPoint {
-  visibility: visible;
+#arrowPoint:hover {
+  cursor: pointer;
+  background-color: rgb(127, 255, 212);
+  border: none;
+  box-shadow: rgba(127, 255, 212,  0.30) 0px 54px 55px, rgba(127, 255, 212, 0.15) 0px -12px 30px, rgba(127, 255, 212,  0.15) 0px 4px 6px, rgba(127, 255, 212,  0.20) 0px 12px 13px, rgba(127, 255, 212,  0.11) 0px -3px 5px;
 }
 
 textarea {
@@ -78,6 +90,7 @@ textarea {
     box-sizing: border-box;
     font-size: large;
 }
+
 button {
     position:absolute;
     right: 0;
@@ -85,6 +98,7 @@ button {
     border: none;
     background-color: transparent;
     visibility: collapse;
+    cursor: pointer;
     background-color: red;
 }
 </style>
