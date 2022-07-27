@@ -5,6 +5,7 @@
         '+' button will create new note.<br>
         'X' button on left corner of note remove given note. <br>
         Click on round button under two notes creates arrow between them.
+        Click on arrow will remove given arrow.
         </p></div>
     </div>
     <div id="noteAdder" @click="addNote">
